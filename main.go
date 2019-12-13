@@ -15,11 +15,11 @@ import (
 )
 
 type RestAPIResp struct {
-	rest []Rest `json:"rest"`
+	Rest []Rest `json:"rest"`
 }
 type Rest struct {
-	name      string `json:"name"`
-	urlMobile string `json:"url_mobile"`
+	Name      string `json:"name"`
+	UrlMobile string `json:"url_mobile"`
 }
 
 func main() {
@@ -124,12 +124,11 @@ func getGurunabiJSONResult(paramsStr string) string {
 	var restJsonApiResp RestAPIResp
 	if err := json.Unmarshal(byteArray, &restJsonApiResp); err != nil {
 		log.Fatal(err)
-		fmt.Println("失敗うんち")
 	}
 	fmt.Println(restJsonApiResp)
-	for _, rest := range restJsonApiResp.rest {
-		result += rest.name + "\n" +
-			rest.urlMobile + "\n"
+	for _, rest := range restJsonApiResp.Rest {
+		result += rest.Name + "\n" +
+			rest.UrlMobile + "\n"
 	}
 	return result
 }
