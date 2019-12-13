@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/line/line-bot-sdk-go/linebot"
+	"io"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -22,6 +23,16 @@ type Rest struct {
 }
 
 func main() {
+	logfile, errr := os.OpenFile("./test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
+	if errr != nil {
+		panic("cannnot open test.log:" + errr.Error())
+	}
+	defer logfile.Close()
+
+	log.SetOutput(io.MultiWriter(logfile, os.Stdout))
+
+	log.SetFlags(log.Ldate | log.Ltime)
+
 	port := os.Getenv("PORT")
 
 	if port == "" {
