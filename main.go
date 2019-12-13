@@ -58,7 +58,6 @@ func main() {
 			return
 		}
 		for _, event := range events {
-			fmt.Println(event)
 			if event.Type == linebot.EventTypeMessage {
 				switch message := event.Message.(type) {
 				case *linebot.TextMessage:
@@ -121,11 +120,12 @@ func getGurunabiJSONResult(paramsStr string) string {
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
 
-	result := ""
+	result := "empty"
 	var restJsonApiResp RestAPIResp
 	if err := json.Unmarshal(byteArray, &restJsonApiResp); err != nil {
 		log.Fatal(err)
 	}
+	fmt.Println(restJsonApiResp.rest)
 	for _, rest := range restJsonApiResp.rest {
 		result += rest.name + "\n" +
 			rest.mobileUrl + "\n"
