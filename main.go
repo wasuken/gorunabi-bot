@@ -126,7 +126,7 @@ func getGurunabiJSONResult(paramsStr string) string {
 		log.Fatal(err)
 		fmt.Println("失敗うんち")
 	}
-	fmt.Println(RestAPIResp)
+	fmt.Println(restJsonApiResp)
 	for _, rest := range restJsonApiResp.rest {
 		result += rest.name + "\n" +
 			rest.mobileUrl + "\n"
