@@ -1,0 +1,13 @@
+{
+	"comment": "",
+	"ignore": "test",
+	"package": [
+		{
+			"checksumSHA1": "Bo35Ajst/NdTpTuFBnFkZf4r9pE=",
+			"path": "github.com/line/line-bot-sdk-go/linebot",
+			"revision": "42fa4600ac24cf67feebad691252304d39684784",
+			"revisionTime": "2019-12-08T00:29:21Z"
+		}
+	],
+	"rootPath": "gorunabi-bot"
+}
