@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"github.com/bitly/go-simplejson"
 	"github.com/line/line-bot-sdk-go/linebot"
 	"io/ioutil"
 	"log"
@@ -12,6 +12,14 @@ import (
 	"regexp"
 	"strings"
 )
+
+type RestAPIResp struct {
+	rest []Rest `json:"rest"`
+}
+type Rest struct {
+	name      string `json:"name"`
+	mobileUrl string `json:"mobile_url"`
+}
 
 func main() {
 	port := os.Getenv("PORT")
@@ -100,17 +108,16 @@ func getGurunabiJSONResult(paramsStr string) string {
 	defer resp.Body.Close()
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
-	js, err := simplejson.NewJson(byteArray)
-	if err != nil {
+
+	result := ""
+	var restJsonApiResp RestAPIResp
+	if err := json.Unmarshal(byteArray, &restJsonApiResp); err != nil {
 		log.Fatal(err)
 	}
-	result := ""
-	fmt.Println(js.Get("rest").Map())
-	// for rest := range js.Get("rest").MustArray() {
-	// 	result += rest.Get("id").String() + "\n" +
-	// 		rest.Get("name").String() + "\n" +
-	// 		rest.Get("url_mobile").String() + "\n"
-	// }
+	for _, rest := range restJsonApiResp.rest {
+		result += rest.name + "\n" +
+			rest.mobileUrl + "\n"
+	}
 	return result
 }
 
