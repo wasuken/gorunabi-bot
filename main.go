@@ -98,7 +98,7 @@ key:valueを設定していき、最終的に設定した値で検索し、結�
 			return "", fmt.Errorf("%s is invalid format", message)
 		} else {
 			params := url.Values{}
-			params.Add("apikey", os.Getenv("GURUNABI_SECRET"))
+			params.Add("keyid", os.Getenv("GURUNABI_SECRET"))
 			kvs := strings.Split(message, ":")
 			if ok := params.Get(kvs[0]); ok != "" {
 				params.Del(kvs[0])
@@ -108,7 +108,7 @@ key:valueを設定していき、最終的に設定した値で検索し、結�
 		}
 	} else {
 		params := parseKvs(message)
-		params.Add("apikey", os.Getenv("GURUNABI_SECRET"))
+		params.Add("keyid", os.Getenv("GURUNABI_SECRET"))
 		return getGurunabiJSONResult(params.Encode()), nil
 	}
 }
