@@ -19,7 +19,7 @@ type RestAPIResp struct {
 }
 type Rest struct {
 	name      string `json:"name"`
-	mobileUrl string `json:"mobile_url"`
+	urlMobile string `json:"url_mobile"`
 }
 
 func main() {
