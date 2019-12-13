@@ -129,7 +129,7 @@ func getGurunabiJSONResult(paramsStr string) string {
 	fmt.Println(restJsonApiResp)
 	for _, rest := range restJsonApiResp.rest {
 		result += rest.name + "\n" +
-			rest.mobileUrl + "\n"
+			rest.urlMobile + "\n"
 	}
 	return result
 }
