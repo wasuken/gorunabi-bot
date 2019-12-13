@@ -124,8 +124,9 @@ func getGurunabiJSONResult(paramsStr string) string {
 	var restJsonApiResp RestAPIResp
 	if err := json.Unmarshal(byteArray, &restJsonApiResp); err != nil {
 		log.Fatal(err)
+		fmt.Println("失敗うんち")
 	}
-	fmt.Println(string(byteArray))
+	fmt.Println(RestAPIResp)
 	for _, rest := range restJsonApiResp.rest {
 		result += rest.name + "\n" +
 			rest.mobileUrl + "\n"
