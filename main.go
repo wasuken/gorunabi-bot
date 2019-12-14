@@ -86,7 +86,10 @@ func server() {
 }
 
 func parse(message string) (string, error) {
-	if message == "help" {
+	var converted_message string
+	converted_message = strings.Replace(message, "：", ":", -1)
+	converted_message = strings.Replace(converted_message, "　", " ", -1)
+	if converted_message == "help" {
 		f, err := os.Open("help.txt")
 		if err != nil {
 			log.Fatal("error")
@@ -99,16 +102,16 @@ func parse(message string) (string, error) {
 		}
 		return string(b), nil
 	} else {
-		if strings.Count(message, ":") != 1 {
-			return "", fmt.Errorf("%s is invalid format", message)
+		if strings.Count(converted_message, ":") != 1 {
+			return "", fmt.Errorf("%s is invalid format", converted_message)
 		} else {
 			params := url.Values{}
-			kvs := strings.Split(message, ":")
+			kvs := strings.Split(converted_message, ":")
 			if kvs[0] == "検索" {
 				params.Add("freeword", strings.Join(kvs[1:], ""))
 				return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 			}
-			return "", fmt.Errorf("%s is invalid format", message)
+			return "", fmt.Errorf("%s is invalid format", converted_message)
 		}
 	}
 }
