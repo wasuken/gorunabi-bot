@@ -107,7 +107,7 @@ func parse(message string) (string, error) {
 		} else {
 			params := url.Values{}
 			kvs := strings.Split(converted_message, ":")
-			if kvs[0] == "検索" {
+			if kvs[0] == "検索" && kvs[0] != "" {
 				params.Add("freeword", strings.Join(kvs[1:], ""))
 				return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 			}
