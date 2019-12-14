@@ -17,8 +17,8 @@ type GAreaSmallSearchResp struct {
 type Area_s struct {
 	Code    string `json:"areacode_s"`
 	Name    string `json:"areaname_s"`
-	Garea_m Area_m `json:garea_middle`
-	Garea_l Area_l `json:garea_large`
+	Garea_m Area_m `json:"garea_middle"`
+	Garea_l Area_l `json:"garea_large"`
 	Pref    Pref   `json:"pref"`
 }
 type Area_m struct {
@@ -55,36 +55,42 @@ func GetGAreaSmallSearchResponse(api_base_url string) {
 	db.Exec("delete from area_s")
 	db.Exec("delete from pref")
 	// DBにデータを入れる。
+	bulkInsertStr := ""
+	var area_m_codes, area_l_codes, pref_codes []string
 	for _, ga_small := range gresp.Garea_small {
-		if ifNotFound(db, `select count(*) as count from area_m where code = $1`, ga_small.Garea_m.Code) {
-			_, err := db.Exec("insert into area_m values($1, $2)",
+		if !contains(area_m_codes, ga_small.Garea_m.Code) {
+			bulkInsertStr += fmt.Sprintf(`insert into area_m values('%s', '%s');`,
 				ga_small.Garea_m.Code, ga_small.Garea_m.Name)
-			if err != nil {
-				fmt.Println(1)
-				log.Fatal(err)
-			}
+			area_m_codes = append(area_m_codes, ga_small.Garea_m.Code)
 		}
-		if ifNotFound(db, `select count(*) as count from area_l where code = $1`, ga_small.Garea_l.Code) {
-			_, err = db.Exec("insert into area_l values($1, $2)",
+		if !contains(area_l_codes, ga_small.Garea_l.Code) {
+			bulkInsertStr += fmt.Sprintf(`insert into area_l values('%s', '%s');`,
 				ga_small.Garea_l.Code, ga_small.Garea_l.Name)
-			if err != nil {
-				fmt.Println(2)
-				log.Fatal(err)
-			}
+			area_l_codes = append(area_l_codes, ga_small.Garea_l.Code)
 		}
-		if ifNotFound(db, `select count(*) as count from pref where code = $1`, ga_small.Pref.Code) {
-			_, err = db.Exec("insert into pref values($1, $2)",
+		if !contains(pref_codes, ga_small.Pref.Code) {
+			bulkInsertStr += fmt.Sprintf(`insert into pref values('%s', '%s');`,
 				ga_small.Pref.Code, ga_small.Pref.Name)
-			if err != nil {
-				log.Fatal(err)
-			}
+			pref_codes = append(pref_codes, ga_small.Pref.Code)
 		}
-		_, err = db.Exec("insert into area_s values($1, $2, $3, $4, $5)",
+		bulkInsertStr += fmt.Sprintf(`insert into area_s values('%s', '%s', '%s', '%s', '%s');`,
 			ga_small.Code, ga_small.Name, ga_small.Garea_m.Code, ga_small.Garea_l.Code, ga_small.Pref.Code)
-		if err != nil {
-			log.Fatal(err)
+	}
+	fmt.Println("created str")
+	_, err = db.Exec(bulkInsertStr)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fmt.Println("finish")
+}
+
+func contains(ary []string, value string) bool {
+	for _, v := range ary {
+		if v == value {
+			return true
 		}
 	}
+	return false
 }
 
 func ifNotFound(db *sql.DB, sqlStr, code string) bool {
