@@ -1,10 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"io"
+	"gorunabi-bot/api"
+	"gorunabi-bot/masterAPI"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -14,25 +14,29 @@ import (
 	"strings"
 )
 
-type RestAPIResp struct {
-	Rest []Rest `json:"rest"`
-}
-type Rest struct {
-	Name      string `json:"name"`
-	UrlMobile string `json:"url_mobile"`
-}
+const (
+	api_base_url string = "https://api.gnavi.co.jp"
+)
 
 func main() {
-	logfile, errr := os.OpenFile("./test.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0666)
-	if errr != nil {
-		panic("cannnot open test.log:" + errr.Error())
+	if len(os.Args) > 1 {
+		if os.Args[1] == "master" {
+			masterAllUpdate()
+		} else if os.Args[1] == "create" {
+			masterCreate()
+		}
+	} else {
+		server()
 	}
-	defer logfile.Close()
+}
+func masterAllUpdate() {
+	masterAPI.GetGAreaSmallSearchResponse(api_base_url)
+}
+func masterCreate() {
+	masterAPI.CreateTables()
+}
 
-	log.SetOutput(io.MultiWriter(logfile, os.Stdout))
-
-	log.SetFlags(log.Ldate | log.Ltime)
-
+func server() {
 	port := os.Getenv("PORT")
 
 	if port == "" {
@@ -84,12 +88,17 @@ func main() {
 
 func parse(message string) (string, error) {
 	if message == "help" {
-		return `基本的に[key:value]で入力することになります。例:freeword:ラーメン
-key:valueを設定していき、最終的に設定した値で検索し、結果のメッセージをあなたへ送信します。
-また、[key:value,key:value...]のように入力することも可能。
-現在サポートしているkey一覧を知りたくばkey-allを入力してください。
-※(なお、keyおよびvalue中に,や:を入力した場合、確実にparse errorになる上に検索に必要であるとは想定してないのでいちいち入力しないでください)
-`, nil
+		f, err := os.Open("help.txt")
+		if err != nil {
+			log.Fatal("error")
+		}
+		defer f.Close()
+		// 一気に全部読み取り
+		b, err := ioutil.ReadAll(f)
+		if err != nil {
+			log.Fatal("error")
+		}
+		return string(b), nil
 	} else if message == "key-all" {
 		return "key 一覧(工事中)", nil
 	} else if !regexp.MustCompile(`,`).MatchString(message) {
@@ -104,33 +113,13 @@ key:valueを設定していき、最終的に設定した値で検索し、結�
 				params.Del(kvs[0])
 			}
 			params.Add(kvs[0], kvs[1])
-			return getGurunabiJSONResult(params.Encode()), nil
+			return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 		}
 	} else {
 		params := parseKvs(message)
 		params.Add("keyid", os.Getenv("GURUNABI_SECRET"))
-		return getGurunabiJSONResult(params.Encode()), nil
+		return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 	}
-}
-
-// レストラン検索の想定
-func getGurunabiJSONResult(paramsStr string) string {
-	resp, _ := http.Get("https://api.gnavi.co.jp/RestSearchAPI/v3/?" + paramsStr)
-	defer resp.Body.Close()
-
-	byteArray, _ := ioutil.ReadAll(resp.Body)
-
-	result := "empty"
-	var restJsonApiResp RestAPIResp
-	if err := json.Unmarshal(byteArray, &restJsonApiResp); err != nil {
-		log.Fatal(err)
-	}
-	fmt.Println(restJsonApiResp)
-	for _, rest := range restJsonApiResp.Rest {
-		result += rest.Name + "\n" +
-			rest.UrlMobile + "\n"
-	}
-	return result
 }
 
 func parseKvs(kvsStr string) url.Values {
