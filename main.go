@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -99,26 +98,18 @@ func parse(message string) (string, error) {
 			log.Fatal("error")
 		}
 		return string(b), nil
-	} else if message == "key-all" {
-		return "key 一覧(工事中)", nil
-	} else if !regexp.MustCompile(`,`).MatchString(message) {
-		// 単体のkey:valueと想定。
+	} else {
 		if strings.Count(message, ":") != 1 {
 			return "", fmt.Errorf("%s is invalid format", message)
 		} else {
 			params := url.Values{}
-			params.Add("keyid", os.Getenv("GURUNABI_SECRET"))
 			kvs := strings.Split(message, ":")
-			if ok := params.Get(kvs[0]); ok != "" {
-				params.Del(kvs[0])
+			if kvs[0] == "検索" {
+				params.Add("freeword", strings.Join(kvs[1:], ""))
+				return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 			}
-			params.Add(kvs[0], kvs[1])
-			return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
+			return "", fmt.Errorf("%s is invalid format", message)
 		}
-	} else {
-		params := parseKvs(message)
-		params.Add("keyid", os.Getenv("GURUNABI_SECRET"))
-		return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 	}
 }
 
