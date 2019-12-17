@@ -20,6 +20,7 @@ type Rest struct {
 func GetGurunabiJSONResult(api_base_url, paramsStr string) string {
 	rest_api_url := api_base_url + "/RestSearchAPI/v3/?keyid=" +
 		os.Getenv("GURUNABI_SECRET") + "&" + paramsStr
+	fmt.Println(rest_api_url)
 	resp, _ := http.Get(rest_api_url)
 	defer resp.Body.Close()
 
