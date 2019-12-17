@@ -55,7 +55,7 @@ var (
 
 // keywordから、地名を算出し、適切なareaのパラメータを生成する
 func SearchMasterDataMakeKeyValues(keyword string) map[string]string {
-	var kvs map[string]string
+	kvs := make(map[string]string)
 	keyword_split := []string{}
 	for _, k := range strings.Split(keyword, " ") {
 		if utf8.RuneCountInString(k) >= 2 {
