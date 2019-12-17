@@ -71,7 +71,7 @@ func SearchMasterDataMakeKeyValues(keyword string) [][2]string {
 	}
 	return kvs
 }
-func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
+func allMasterNameMap(db *sql.DB, keywords []string) map[string][][]string {
 	whereStr := ""
 	for _, keyword := range keywords {
 		if whereStr != "" {
@@ -82,7 +82,7 @@ func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
 	}
 	whereStr = "where " + whereStr
 
-	var name_list_map map[string][][2]string
+	name_list_map := make(map[string][][]string)
 	for _, v := range db_name_list {
 		base_sql := fmt.Sprintf("select name, code from %s ", v) + whereStr
 		rows, e := db.Query(base_sql)
@@ -95,7 +95,7 @@ func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
 			if er != nil {
 				log.Fatal(er)
 			}
-			name_list_map[v] = append(name_list_map[v], [...]string{name, code})
+			name_list_map[v] = append(name_list_map[v], []string{name, code})
 		}
 		defer rows.Close()
 	}
