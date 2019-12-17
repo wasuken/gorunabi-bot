@@ -11,6 +11,7 @@ import (
 	"os"
 	"strings"
 	"text/template"
+	"unicode/utf8"
 )
 
 // db
@@ -53,9 +54,14 @@ var (
 )
 
 // keywordから、地名を算出し、適切なareaのパラメータを生成する
-func SearchMasterDataMakeKeyValues(keyword string) [][2]string {
-	var kvs [][2]string
-	keyword_split := strings.Split(keyword, " ")
+func SearchMasterDataMakeKeyValues(keyword string) map[string]string {
+	var kvs map[string]string
+	keyword_split := []string{}
+	for _, k := range strings.Split(keyword, " ") {
+		if utf8.RuneCountInString(k) >= 2 {
+			keyword_split = append(keyword_split, k)
+		}
+	}
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	defer db.Close()
 	if err != nil {
@@ -65,7 +71,8 @@ func SearchMasterDataMakeKeyValues(keyword string) [][2]string {
 	for key, name_and_code_list := range name_and_code_list_map {
 		for _, result := range name_and_code_list {
 			if len(result) > 0 {
-				kvs = append(kvs, [2]string{db_name_api_key_map[key], result[1]})
+				// 更新されていくのでとりあえず重複の心配はない
+				kvs[db_name_api_key_map[key]] = result[1]
 			}
 		}
 	}

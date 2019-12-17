@@ -109,10 +109,9 @@ func parse(message string) (string, error) {
 			kvs := strings.Split(converted_message, ":")
 			if kvs[0] == "検索" && strings.TrimSpace(kvs[0]) != "" {
 				params.Add("freeword", strings.Join(kvs[1:], ""))
-				added_kvs := masterAPI.SearchMasterDataMakeKeyValues(strings.Join(kvs[1:], ""))
-				fmt.Println(added_kvs)
-				for _, kv := range added_kvs {
-					params.Add(kv[0], kv[1])
+				added_map := masterAPI.SearchMasterDataMakeKeyValues(strings.Join(kvs[1:], ""))
+				for k, v := range added_map {
+					params.Add(k, v)
 				}
 				return api.GetGurunabiJSONResult(api_base_url, params.Encode()), nil
 			}
