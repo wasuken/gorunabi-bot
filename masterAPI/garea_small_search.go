@@ -75,7 +75,7 @@ func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
 	whereStr := ""
 	for _, keyword := range keywords {
 		if whereStr != "" {
-			whereStr = " or "
+			whereStr += " or "
 		}
 
 		whereStr += "name like " + "'%" + template.HTMLEscapeString(keyword) + "%'"
@@ -84,7 +84,7 @@ func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
 
 	var name_list_map map[string][][2]string
 	for _, v := range db_name_list {
-		base_sql := fmt.Sprintf("select name, code from %s", v) + whereStr
+		base_sql := fmt.Sprintf("select name, code from %s ", v) + whereStr
 		rows, e := db.Query(base_sql)
 		if e != nil {
 			log.Fatal(e)
