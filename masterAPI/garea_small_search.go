@@ -9,8 +9,20 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
+	"text/template"
 )
 
+// db
+type Area_s_db struct {
+	Code         string
+	Name         string
+	Garea_m_code string
+	Garea_l_code string
+	Pref_code    string
+}
+
+// api
 type GAreaSmallSearchResp struct {
 	Garea_small []Area_s `json:"garea_small"`
 }
@@ -32,6 +44,62 @@ type Area_l struct {
 type Pref struct {
 	Code string `json:"pref_code"`
 	Name string `json:"pref_name"`
+}
+
+var (
+	db_name_list        [4]string         = [...]string{"area_s", "area_m", "area_l", "pref"}
+	db_name_api_key_map map[string]string = map[string]string{"area_s": "areacode_s",
+		"area_m": "areacode_m", "area_l": "areacode_l", "pref": "pref"}
+)
+
+// keywordから、地名を算出し、適切なareaのパラメータを生成する
+func SearchMasterDataMakeKeyValues(keyword string) [][2]string {
+	var kvs [][2]string
+	keyword_split := strings.Split(keyword, " ")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+	defer db.Close()
+	if err != nil {
+		log.Fatal(err)
+	}
+	name_and_code_list_map := allMasterNameMap(db, keyword_split)
+	for key, name_and_code_list := range name_and_code_list_map {
+		for _, result := range name_and_code_list {
+			if len(result) > 0 {
+				kvs = append(kvs, [2]string{db_name_api_key_map[key], result[1]})
+			}
+		}
+	}
+	return kvs
+}
+func allMasterNameMap(db *sql.DB, keywords []string) map[string][][2]string {
+	whereStr := ""
+	for _, keyword := range keywords {
+		if whereStr != "" {
+			whereStr = " or "
+		}
+
+		whereStr += "name like " + "'%" + template.HTMLEscapeString(keyword) + "%'"
+	}
+	whereStr = "where " + whereStr
+
+	var name_list_map map[string][][2]string
+	for _, v := range db_name_list {
+		base_sql := fmt.Sprintf("select name, code from %s", v) + whereStr
+		rows, e := db.Query(base_sql)
+		if e != nil {
+			log.Fatal(e)
+		}
+		var name, code string
+		for rows.Next() {
+			er := rows.Scan(&name, &code)
+			if er != nil {
+				log.Fatal(er)
+			}
+			name_list_map[v] = append(name_list_map[v], [...]string{name, code})
+		}
+		defer rows.Close()
+	}
+	return name_list_map
 }
 
 // マスタの取得

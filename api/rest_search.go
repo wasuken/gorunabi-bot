@@ -18,8 +18,9 @@ type Rest struct {
 
 // レストラン検索の想定
 func GetGurunabiJSONResult(api_base_url, paramsStr string) string {
-	resp, _ := http.Get(api_base_url + "/RestSearchAPI/v3/?keyid=" +
-		os.Getenv("GURUNABI_SECRET") + "&" + paramsStr)
+	rest_api_url := api_base_url + "/RestSearchAPI/v3/?keyid=" +
+		os.Getenv("GURUNABI_SECRET") + "&" + paramsStr
+	resp, _ := http.Get(rest_api_url)
 	defer resp.Body.Close()
 
 	byteArray, _ := ioutil.ReadAll(resp.Body)
