@@ -48,8 +48,8 @@ type Pref struct {
 }
 
 var (
-	db_name_list        [4]string         = [...]string{"area_s", "area_m", "area_l", "pref"}
-	db_name_api_key_map map[string]string = map[string]string{"area_s": "areacode_s",
+	DB_NAME_LIST        [4]string         = [...]string{"area_s", "area_m", "area_l", "pref"}
+	DB_NAME_API_KEY_MAP map[string]string = map[string]string{"area_s": "areacode_s",
 		"area_m": "areacode_m", "area_l": "areacode_l", "pref": "pref"}
 )
 
@@ -72,7 +72,7 @@ func SearchMasterDataMakeKeyValues(keyword string) map[string]string {
 		for _, result := range name_and_code_list {
 			if len(result) > 0 {
 				// 更新されていくのでとりあえず重複の心配はない
-				kvs[db_name_api_key_map[key]] = result[1]
+				kvs[DB_NAME_API_KEY_MAP[key]] = result[1]
 			}
 		}
 	}
@@ -90,7 +90,7 @@ func allMasterNameMap(db *sql.DB, keywords []string) map[string][][]string {
 	whereStr = "where " + whereStr
 
 	name_list_map := make(map[string][][]string)
-	for _, v := range db_name_list {
+	for _, v := range DB_NAME_LIST {
 		base_sql := fmt.Sprintf("select name, code from %s ", v) + whereStr
 		rows, e := db.Query(base_sql)
 		if e != nil {
