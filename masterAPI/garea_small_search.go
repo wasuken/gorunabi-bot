@@ -71,6 +71,7 @@ func SearchMasterDataMakeKeyValues(keyword string) map[string]string {
 	for key, name_and_code_list := range name_and_code_list_map {
 		for _, result := range name_and_code_list {
 			if len(result) > 0 {
+				fmt.Println(DB_NAME_API_KEY_MAP[key] + ":" + result[1])
 				// 更新されていくのでとりあえず重複の心配はない
 				kvs[DB_NAME_API_KEY_MAP[key]] = result[1]
 			}

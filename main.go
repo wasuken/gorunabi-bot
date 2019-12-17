@@ -112,7 +112,7 @@ func parse(message string) (string, error) {
 				added_map := masterAPI.SearchMasterDataMakeKeyValues(strings.Join(kvs[1:], ""))
 				for _, v := range masterAPI.DB_NAME_LIST {
 					if added_map[masterAPI.DB_NAME_API_KEY_MAP[v]] != "" {
-						params.Add(v, added_map[masterAPI.DB_NAME_API_KEY_MAP[v]])
+						params.Add(masterAPI.DB_NAME_API_KEY_MAP[v], added_map[masterAPI.DB_NAME_API_KEY_MAP[v]])
 						break
 					}
 				}
