@@ -9,29 +9,37 @@
 			"revisionTime": "2018-11-14T20:31:07Z"
 		},
 		{
-			"checksumSHA1": "nhOTluaTVFoLhedKgpJcNMF+4fo=",
+			"checksumSHA1": "iSGHMfkwqVO2WV9lcUhiZ5lXFKA=",
 			"path": "github.com/lib/pq",
-			"revision": "99274577be97ac9b1d95a2d61d566dc9b7cc6a54",
-			"revisionTime": "2019-12-11T04:41:10Z"
+			"revision": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be",
+			"revisionTime": "2020-01-16T17:15:13Z"
 		},
 		{
 			"checksumSHA1": "AU3fA8Sm33Vj9PBoRPSeYfxLRuE=",
 			"path": "github.com/lib/pq/oid",
-			"revision": "99274577be97ac9b1d95a2d61d566dc9b7cc6a54",
-			"revisionTime": "2019-12-11T04:41:10Z"
+			"revision": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be",
+			"revisionTime": "2020-01-16T17:15:13Z"
 		},
 		{
 			"checksumSHA1": "n0MMCrKKsQuuhv7vLsrtRUGJVA8=",
 			"path": "github.com/lib/pq/scram",
-			"revision": "99274577be97ac9b1d95a2d61d566dc9b7cc6a54",
-			"revisionTime": "2019-12-11T04:41:10Z"
+			"revision": "9eb3fc897d6fd97dd4aad3d0404b54e2f7cc56be",
+			"revisionTime": "2020-01-16T17:15:13Z"
 		},
 		{
-			"checksumSHA1": "Bo35Ajst/NdTpTuFBnFkZf4r9pE=",
+			"checksumSHA1": "RYuXRx6RVyyIKnElxmxuKlcWXN4=",
 			"path": "github.com/line/line-bot-sdk-go/linebot",
-			"revision": "42fa4600ac24cf67feebad691252304d39684784",
-			"revisionTime": "2019-12-08T00:29:21Z"
+			"revision": "18ff60a2acd0927bbd553167dc3f318f25db219c",
+			"revisionTime": "2020-01-10T08:49:54Z"
+		},
+		{
+			"path": "gorunabi-bot/api",
+			"revision": ""
+		},
+		{
+			"path": "gorunabi-bot/masterAPI",
+			"revision": ""
 		}
 	],
-	"rootPath": "gorunabi-bot"
+	"rootPath": "github.com/wasuken/gorunabi-bot"
 }

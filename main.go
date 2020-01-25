@@ -3,8 +3,8 @@ package main
 import (
 	"fmt"
 	"github.com/line/line-bot-sdk-go/linebot"
-	"gorunabi-bot/api"
-	"gorunabi-bot/masterAPI"
+	"github.com/wasuken/gorunabi-bot/api"
+	"github.com/wasuken/gorunabi-bot/masterAPI"
 	"io/ioutil"
 	"log"
 	"net/http"
